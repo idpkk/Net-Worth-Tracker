@@ -17,8 +17,12 @@ public class MyAuthenticationProvider implements org.springframework.security.au
 		this.userDetails = userDetails;
 	}
 
+	MyAuthenticationProvider() {
+	}
+
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		System.out.println("MyAuthenticationProvider:  "+userDetails);
 		String token = (String) authentication.getPrincipal();
 		token = getDecodedToken(token);
 		if (Objects.equals(token, userDetails.getPassword())) {
