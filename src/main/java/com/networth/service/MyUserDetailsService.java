@@ -23,13 +23,10 @@ public class MyUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		System.out.println("username 2:  " + username);
 		Optional<User> user = repo.findByUsername(username);
 		if (!user.isPresent()) {
-			System.out.println("USERNMAE:   " + username);
 			throw new NewtworthException("USERNMAE Not Found: " + username);
 		}
-		System.out.println("password 3:  " + user.get().getPassword());
 		return user.map(MyUserDetails::new).get();
 	}
 

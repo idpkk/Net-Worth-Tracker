@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.networth.service.MyUserDetailsService;
 import com.networth.util.JwtUtil;
 
-//@Component
+@Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
 	@Autowired
@@ -30,24 +30,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		String authHeader = request.getHeader("Authorization");
-		String username = null, jwt = null;
+		final String authHeader = request.getHeader("Authorization");
+		String username = null;
+		String jwt = null;
 
-		if (authHeader != null && authHeader.contains("Bearer")) {
+		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			jwt = authHeader.substring(7);
 			username = jwtUtil.extractUsername(jwt);
 		}
 
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = service.loadUserByUsername(username);
-			if(jwtUtil.validateToken(jwt, userDetails)) {
-				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = 
-						new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-				usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+			UserDetails userDetails = this.service.loadUserByUsername(username);
+			if (jwtUtil.validateToken(jwt, userDetails)) {
+				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
+				usernamePasswordAuthenticationToken
+						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 			}
 		}
-
+		filterChain.doFilter(request, response);
 	}
 
 }

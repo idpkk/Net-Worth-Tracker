@@ -20,9 +20,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	MyUserDetailsService service;
 
-	/*
-	 * @Autowired JwtAuthFilter jwtFilter;
-	 */
+	@Autowired
+	JwtAuthFilter jwtFilter;
 
 	@Bean("authenticationManager")
 	@Override
@@ -41,15 +40,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll()
-				.antMatchers("/admin").hasRole("ADMIN").antMatchers("/user").hasAnyRole("USER", "ADMIN").anyRequest()
-				.authenticated()
-		/*
-		 * .and().sessionManagement()
-		 * .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-		 * .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-		 */
-		;
-
+				// .antMatchers("/admin").hasRole("ADMIN").antMatchers("/user").hasAnyRole("USER",
+				// "ADMIN")
+				.anyRequest().authenticated().and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Bean

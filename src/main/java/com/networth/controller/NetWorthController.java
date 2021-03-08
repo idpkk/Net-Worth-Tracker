@@ -58,7 +58,6 @@ public class NetWorthController {
 
 	@PostMapping("/lastYear")
 	private NetWorth lastYearDetails(@RequestBody @Valid LastYearDetails lastYearDetails) {
-		System.out.println("lastYearDetails: " + lastYearDetails);
 		return service.lastYearDetails(lastYearDetails);
 	}
 
@@ -70,7 +69,6 @@ public class NetWorthController {
 	@PostMapping("/authenticate")
 	private AuthenticateResponse login(@RequestBody() AuthenticateRequest user, final HttpServletRequest request)
 			throws Exception {
-		System.out.println("user:  " + user);
 		try {
 			UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(user.getUsername(),
 					user.getPassword());
@@ -88,7 +86,6 @@ public class NetWorthController {
 		}
 
 		final UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
-		System.out.println("userDetails:  " + userDetails);
 		String jwt = jwtUtils.generateToken(userDetails);
 		return new AuthenticateResponse(jwt);
 
@@ -96,7 +93,6 @@ public class NetWorthController {
 
 	@GetMapping("/signout")
 	private void logout(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("LOGOUT  ");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) {
 			new SecurityContextLogoutHandler().logout(request, response, auth);
